@@ -70,8 +70,8 @@ module AlphabeticalPaginate
           if can_go_quicker
             output = self.where("LOWER(%s) LIKE ?" % params[:db_field], current_field+'%')
           else
-            regexp_to_check = current_field =~ /[0-9]/ ? '^[0-9]' : '^[^a-z0-9]'
-            output = self.where("LOWER(%s) REGEXP '%s.*'" % [params[:db_field], regexp_to_check])
+            regexp_to_check = current_field =~ /[0-9]/ ? '^[0-9]' : '(^[^a-z0-9].*)|(^$)'
+            output = self.where("COALESCE(LOWER(%s), '') REGEXP '%s'" % [params[:db_field], regexp_to_check])
           end
         end
       else
